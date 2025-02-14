@@ -13,7 +13,7 @@ export default function PlaceImg({
   return (
     <img
       className={className}
-      src={'http://localhost:3000/uploads/' + place.photos[index]}
+      src={`${process.env.API_URL}/uploads/` + place.photos[index]}
       alt=""
     />
   );
