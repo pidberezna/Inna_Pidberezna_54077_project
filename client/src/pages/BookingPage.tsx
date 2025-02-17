@@ -20,9 +20,10 @@ export interface Booking {
 export default function BookingPage() {
   const { id } = useParams<{ id: string }>();
   const [booking, setBooking] = useState<Booking | null>(null);
+  const API_URL = process.env.API_URL;
   useEffect(() => {
     if (id) {
-      axios.get<Booking[]>('/bookings').then((response) => {
+      axios.get<Booking[]>(`${API_URL}/bookings`).then((response) => {
         const foundBooking = response.data.find(
           (booking) => booking._id === id
         );

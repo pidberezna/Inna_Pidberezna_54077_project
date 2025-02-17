@@ -8,13 +8,14 @@ import AccountNav from '../AccountNav';
 export default function AccountPage() {
   const [redirect, setRedirect] = useState<string | null>(null);
   const { ready, user, setUser } = useContext(UserContext);
+  const API_URL = process.env.API_URL;
   let { subpage } = useParams();
   if (subpage === undefined) {
     subpage = 'profile';
   }
 
   async function logout() {
-    await axios.post('/logout', {}, { withCredentials: true });
+    await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
     setRedirect('/');
     setUser(null);
   }

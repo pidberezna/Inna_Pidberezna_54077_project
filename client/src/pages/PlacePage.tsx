@@ -9,11 +9,12 @@ import AddressLink from '../AddressLink';
 export default function PlacePage() {
   const { id } = useParams();
   const [place, setPlace] = useState<Place>();
+  const API_URL = process.env.API_URL;
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get('/places/' + id).then((response) => {
+    axios.get(`${API_URL}/places/${id}`).then((response) => {
       setPlace(response.data);
     });
   }, [id]);

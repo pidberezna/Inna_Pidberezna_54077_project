@@ -11,11 +11,12 @@ export default function PhotosUploader({
   onChange,
 }: PhotosUploaderProps) {
   const [photoLink, setPhotoLink] = useState<string>('');
+  const API_URL = process.env.API_URL;
 
   async function addPhotoByLink(ev: React.MouseEvent<HTMLButtonElement>) {
     ev.preventDefault();
     const { data: filename } = await axios.post(
-      '/upload-by-link',
+      `${API_URL}/upload-by-link`,
       {
         link: photoLink,
       },

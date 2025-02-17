@@ -20,10 +20,13 @@ export interface Place {
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
+  const API_URL = process.env.API_URL;
   useEffect(() => {
-    axios.get('/user-places', { withCredentials: true }).then(({ data }) => {
-      setPlaces(data);
-    });
+    axios
+      .get(`${API_URL}/user-places`, { withCredentials: true })
+      .then(({ data }) => {
+        setPlaces(data);
+      });
   }, []);
   return (
     <div>

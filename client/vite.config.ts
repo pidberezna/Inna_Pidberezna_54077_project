@@ -1,12 +1,9 @@
-// https://vite.dev/config/
-export default {
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
   server: {
-    proxy: {
-      '/api': {
-        target: 'https://rently-app-project-api.onrender.com',
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    port: 5173,
   },
-};
+});

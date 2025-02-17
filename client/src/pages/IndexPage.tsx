@@ -6,8 +6,9 @@ import Image from '../Image.tsx';
 
 export default function IndexPage() {
   const [places, setPlaces] = useState<Place[]>([]);
+  const API_URL = process.env.API_URL;
   useEffect(() => {
-    axios.get('/places').then((response) => {
+    axios.get(`${API_URL}/places`).then((response) => {
       setPlaces(response.data);
     });
   }, []);
