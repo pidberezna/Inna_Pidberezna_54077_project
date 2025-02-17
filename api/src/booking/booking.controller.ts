@@ -3,7 +3,7 @@ import { BookingService } from './booking.service';
 import { BookingDto } from './dtos/booking.dto';
 import { AuthenticatedRequest, AuthGuard } from '../auth/auth.guard';
 
-@Controller()
+@Controller('account')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
