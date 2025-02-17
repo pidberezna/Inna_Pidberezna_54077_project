@@ -22,7 +22,7 @@ export function UserContextProvider({ children }: UserContextProviderProps) {
   const [ready, setReady] = useState(false);
   useEffect(() => {
     axios
-      .get('/profile')
+      .get('/profile', { withCredentials: true })
       .then(({ data }) => {
         setUser(data.user);
         setReady(true);
