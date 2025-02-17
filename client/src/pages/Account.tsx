@@ -8,7 +8,7 @@ import AccountNav from '../AccountNav';
 export default function AccountPage() {
   const [redirect, setRedirect] = useState<string | null>(null);
   const { ready, user, setUser } = useContext(UserContext);
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.API_URL;
   let { subpage } = useParams();
   if (subpage === undefined) {
     subpage = 'profile';

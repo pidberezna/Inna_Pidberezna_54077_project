@@ -13,7 +13,7 @@ export default function PlaceImg({
   return (
     <img
       className={className}
-      src={`${import.meta.env.VITE_API_URL}/uploads/` + place.photos[index]}
+      src={`${import.meta.env.API_URL}/uploads/` + place.photos[index]}
       alt=""
     />
   );

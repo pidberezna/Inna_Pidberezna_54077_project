@@ -11,7 +11,7 @@ export default function PhotosUploader({
   onChange,
 }: PhotosUploaderProps) {
   const [photoLink, setPhotoLink] = useState<string>('');
-  const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.API_URL;
 
   async function addPhotoByLink(ev: React.MouseEvent<HTMLButtonElement>) {
     ev.preventDefault();
@@ -83,7 +83,7 @@ export default function PhotosUploader({
             <div key={link} className="h-32 flex relative">
               <img
                 className="rounded-2xl w-full object-cover"
-                src={`${import.meta.env.VITE_API_URL}/uploads/${link}`}
+                src={`${import.meta.env.API_URL}/uploads/${link}`}
                 alt="Uploaded"
               />
               <button
