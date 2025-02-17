@@ -34,7 +34,7 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
   }
   async function bookThisPlace() {
     const response = await axios.post(
-      `${API_URL}/bookings`,
+      `${API_URL}/account/bookings`,
       {
         checkIn,
         checkOut,

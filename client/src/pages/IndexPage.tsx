@@ -8,7 +8,7 @@ export default function IndexPage() {
   const [places, setPlaces] = useState<Place[]>([]);
   const API_URL = import.meta.env.API_URL;
   useEffect(() => {
-    axios.get(`${API_URL}/places`).then((response) => {
+    axios.get(`${API_URL}/account/places`).then((response) => {
       setPlaces(response.data);
     });
   }, []);

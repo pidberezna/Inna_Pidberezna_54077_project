@@ -23,7 +23,7 @@ export default function PlacesFormPage() {
     if (!id) {
       return;
     }
-    axios.get(`${API_URL}/places/${id}`).then((response) => {
+    axios.get(`${API_URL}/account/places/${id}`).then((response) => {
       const { data } = response;
       setTitle(data.title);
       setAddress(data.address);
@@ -69,13 +69,13 @@ export default function PlacesFormPage() {
     };
     if (id) {
       await axios.put(
-        `${API_URL}/places`,
+        `${API_URL}/account/places`,
         { id, ...placeData },
         { withCredentials: true }
       );
       setRedirect(true);
     } else {
-      await axios.post(`${API_URL}/places`, placeData, {
+      await axios.post(`${API_URL}/account/places`, placeData, {
         withCredentials: true,
       });
       setRedirect(true);

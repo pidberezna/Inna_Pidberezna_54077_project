@@ -23,7 +23,7 @@ export default function BookingPage() {
   const API_URL = import.meta.env.API_URL;
   useEffect(() => {
     if (id) {
-      axios.get<Booking[]>(`${API_URL}/bookings`).then((response) => {
+      axios.get<Booking[]>(`${API_URL}/account/bookings`).then((response) => {
         const foundBooking = response.data.find(
           (booking) => booking._id === id
         );

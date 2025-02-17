@@ -14,7 +14,7 @@ export default function PlacePage() {
     if (!id) {
       return;
     }
-    axios.get(`${API_URL}/places/${id}`).then((response) => {
+    axios.get(`${API_URL}/account/places/${id}`).then((response) => {
       setPlace(response.data);
     });
   }, [id]);
