@@ -66,12 +66,10 @@ export class AuthService {
       const payload = { userId: user._id.toString(), email: user.email };
       const token = await this.jwtService.sign(payload);
 
-      const isProduction = process.env.NODE_ENV === 'production';
-
       res.cookie('token', token, {
         httpOnly: true,
         sameSite: 'none',
-        secure: isProduction,
+        secure: true,
       });
 
       return res.json({
@@ -91,7 +89,7 @@ export class AuthService {
     try {
       res.clearCookie('token', {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         sameSite: 'none',
       });
       return res.json({ message: 'Logged out successfully' });
