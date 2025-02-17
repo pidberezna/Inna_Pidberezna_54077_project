@@ -8,9 +8,9 @@ import { Booking } from './BookingPage';
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const API_URL = import.meta.env.API_URL;
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
-    axios.get(`${API_URL}/account/bookings`).then((response) => {
+    axios.get(`${VITE_API_URL}/account/bookings`).then((response) => {
       setBookings(response.data);
     });
   }, []);

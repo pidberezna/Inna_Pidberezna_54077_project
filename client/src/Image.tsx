@@ -8,6 +8,6 @@ export default function Image({ src, ...rest }: ImageProps) {
   src =
     src && src.includes('https://')
       ? src
-      : `${import.meta.env.API_URL}/uploads/${src}`;
+      : `${import.meta.env.VITE_API_URL}/uploads/${src}`;
   return <img {...rest} src={src} alt={''} />;
 }

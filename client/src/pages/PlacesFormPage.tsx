@@ -18,12 +18,12 @@ export default function PlacesFormPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
-  const API_URL = import.meta.env.API_URL;
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get(`${API_URL}/account/places/${id}`).then((response) => {
+    axios.get(`${VITE_API_URL}/account/places/${id}`).then((response) => {
       const { data } = response;
       setTitle(data.title);
       setAddress(data.address);
@@ -69,13 +69,13 @@ export default function PlacesFormPage() {
     };
     if (id) {
       await axios.put(
-        `${API_URL}/account/places`,
+        `${VITE_API_URL}/account/places`,
         { id, ...placeData },
         { withCredentials: true }
       );
       setRedirect(true);
     } else {
-      await axios.post(`${API_URL}/account/places`, placeData, {
+      await axios.post(`${VITE_API_URL}/account/places`, placeData, {
         withCredentials: true,
       });
       setRedirect(true);

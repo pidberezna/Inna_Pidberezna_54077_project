@@ -20,17 +20,19 @@ export interface Booking {
 export default function BookingPage() {
   const { id } = useParams<{ id: string }>();
   const [booking, setBooking] = useState<Booking | null>(null);
-  const API_URL = import.meta.env.API_URL;
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     if (id) {
-      axios.get<Booking[]>(`${API_URL}/account/bookings`).then((response) => {
-        const foundBooking = response.data.find(
-          (booking) => booking._id === id
-        );
-        if (foundBooking) {
-          setBooking(foundBooking);
-        }
-      });
+      axios
+        .get<Booking[]>(`${VITE_API_URL}/account/bookings`)
+        .then((response) => {
+          const foundBooking = response.data.find(
+            (booking) => booking._id === id
+          );
+          if (foundBooking) {
+            setBooking(foundBooking);
+          }
+        });
     }
   }, [id]);
 

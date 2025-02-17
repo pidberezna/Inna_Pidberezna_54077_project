@@ -8,13 +8,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState<string>('');
   const [redirect, setRedirect] = useState<boolean>(false);
   const { setUser } = useContext(UserContext);
-  const API_URL = import.meta.env.API_URL;
+  const VITE_API_URL = import.meta.env.VITE_API_URL;
   async function handleLoginSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
-      console.log('API_URL:', API_URL);
+      console.log('VITE_API_URL:', VITE_API_URL);
       const { data } = await axios.post(
-        `${API_URL}/login`,
+        `${VITE_API_URL}/login`,
         { email, password },
         { withCredentials: true }
       );
