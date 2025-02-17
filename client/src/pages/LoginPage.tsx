@@ -12,6 +12,7 @@ export default function LoginPage() {
   async function handleLoginSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
+      console.log('API_URL:', API_URL);
       const { data } = await axios.post(
         `${API_URL}/login`,
         { email, password },
