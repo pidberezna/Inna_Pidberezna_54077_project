@@ -9,10 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: 'https://rently-app-project.onrender.com',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  await app.listen(process.env.API_PORT);
+  await app.listen(process.env.API_PORT || 3000);
 }
 bootstrap();
