@@ -20,7 +20,7 @@ export interface Place {
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
-  const API_URL = process.env.API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     axios
       .get(`${API_URL}/user-places`, { withCredentials: true })

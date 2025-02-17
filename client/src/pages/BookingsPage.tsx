@@ -8,7 +8,7 @@ import { Booking } from './BookingPage';
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const API_URL = process.env.API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     axios.get(`${API_URL}/bookings`).then((response) => {
       setBookings(response.data);

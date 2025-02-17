@@ -18,7 +18,7 @@ export default function PlacesFormPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
-  const API_URL = process.env.API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     if (!id) {
       return;

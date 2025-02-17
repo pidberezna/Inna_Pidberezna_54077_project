@@ -17,7 +17,7 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
   const [phone, setPhone] = useState('');
   const [redirect, setRedirect] = useState('');
   const { user } = useContext(UserContext);
-  const API_URL = process.env.API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (user) {

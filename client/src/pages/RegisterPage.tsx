@@ -6,7 +6,7 @@ export default function RegisterPage() {
   const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const API_URL = process.env.API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
   async function registerUser(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
