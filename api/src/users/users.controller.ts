@@ -8,7 +8,6 @@ export class UsersController {
   @Get('profile')
   @UseGuards(AuthGuard)
   async getProfile(@Req() req: AuthenticatedRequest) {
-    console.log('User from request:', req.user);
     return this.usersService.getProfile(req.user);
   }
 }

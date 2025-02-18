@@ -12,7 +12,6 @@ export default function LoginPage() {
   async function handleLoginSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
-      console.log('VITE_API_URL:', VITE_API_URL);
       const { data } = await axios.post(
         `${VITE_API_URL}/login`,
         { email, password },
