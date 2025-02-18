@@ -35,5 +35,3 @@ import { UserPhotosAccommodationsController } from './user-photos-accommodations
   providers: [UserAccommodationsService],
 })
 export class UserAccommodationsModule {}
-
-//короче тобі треба виправити всі баги що є щоб ти могла загружати акомодейшн
