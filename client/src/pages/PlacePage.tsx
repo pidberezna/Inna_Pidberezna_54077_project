@@ -14,9 +14,11 @@ export default function PlacePage() {
     if (!id) {
       return;
     }
-    axios.get(`${VITE_API_URL}/account/places/${id}`).then((response) => {
-      setPlace(response.data);
-    });
+    axios
+      .get(`${VITE_API_URL}/account/places/${id}`, { withCredentials: true })
+      .then((response) => {
+        setPlace(response.data);
+      });
   }, [id]);
   if (!place) return '';
   return (
