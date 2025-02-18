@@ -9,6 +9,7 @@ import {
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User, UserSchema } from 'src/users/entities/user.entity';
+import { UserPhotosAccommodationsController } from './user-photos-accommodations.controller';
 
 @Module({
   imports: [
@@ -27,7 +28,10 @@ import { User, UserSchema } from 'src/users/entities/user.entity';
     ]),
     JwtModule,
   ],
-  controllers: [UserAccommodationsController],
+  controllers: [
+    UserAccommodationsController,
+    UserPhotosAccommodationsController,
+  ],
   providers: [UserAccommodationsService],
 })
 export class UserAccommodationsModule {}

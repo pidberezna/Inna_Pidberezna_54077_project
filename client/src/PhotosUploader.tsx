@@ -35,7 +35,7 @@ export default function PhotosUploader({
       data.append('photos', files[i]);
     }
     await axios
-      .post('/upload', data, {
+      .post(`${VITE_API_URL}/upload`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       .then((response) => {
