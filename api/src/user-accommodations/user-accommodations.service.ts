@@ -49,8 +49,6 @@ export class UserAccommodationsService {
       throw new BadRequestException('No files uploaded');
     }
     try {
-      // Check if any file in the array is missing a path
-      // before starting the mapping operation
       const hasMissingPath = files.some((file) => !file.path);
       if (hasMissingPath) {
         throw new InternalServerErrorException('Failed to upload files');

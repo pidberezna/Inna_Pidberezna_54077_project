@@ -14,18 +14,16 @@ describe('BookingService', () => {
   let service: BookingService;
   let bookingModel: Model<Booking>;
 
-  // Мок-дані з правильними типами даних
   const mockUser: User = {
     _id: new Types.ObjectId('6123456789abcdef12345678'),
     email: 'test@example.com',
     name: 'Test User',
     password: 'hashedpassword',
-    // Додайте інші необхідні властивості User тут
   };
 
   const mockBookingDto: BookingDto = {
-    checkIn: '2025-04-01T10:00:00.000Z', // Тепер це рядок, а не об'єкт Date
-    checkOut: '2025-04-05T12:00:00.000Z', // Тепер це рядок, а не об'єкт Date
+    checkIn: '2025-04-01T10:00:00.000Z',
+    checkOut: '2025-04-05T12:00:00.000Z',
     numberOfGuests: 2,
     name: 'Test Booking',
     email: 'testemail@gmail.com',
@@ -36,8 +34,8 @@ describe('BookingService', () => {
   const mockBooking = {
     _id: new Types.ObjectId('6123456789abcdef1234567a'),
     user: mockUser._id,
-    checkIn: '2025-04-01T10:00:00.000Z', // Формат відповідає IsDateString
-    checkOut: '2025-04-05T12:00:00.000Z', // Формат відповідає IsDateString
+    checkIn: '2025-04-01T10:00:00.000Z',
+    checkOut: '2025-04-05T12:00:00.000Z',
     numberOfGuests: 2,
     name: 'Test Booking',
     phone: '+380123456789',
@@ -106,7 +104,6 @@ describe('BookingService', () => {
 
   describe('showAccommodations', () => {
     it('should return all accommodations for a user', async () => {
-      // Налаштування повного ланцюжка методів з правильним поверненням значення
       const mockSort = jest.fn().mockResolvedValue([mockBooking]);
       const mockPopulate = jest.fn().mockReturnValue({ sort: mockSort });
       mockBookingModel.find.mockReturnValue({ populate: mockPopulate });
@@ -129,7 +126,6 @@ describe('BookingService', () => {
     });
 
     it('should throw InternalServerErrorException if finding bookings fails', async () => {
-      // Налаштування кожного методу в ланцюжку для тестування помилки
       const mockSort = jest.fn().mockRejectedValue(new Error('Database error'));
       const mockPopulate = jest.fn().mockReturnValue({ sort: mockSort });
       mockBookingModel.find.mockReturnValue({ populate: mockPopulate });

@@ -20,7 +20,6 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    // Check if email already exists
     const existingUser = await this.usersService.findByEmail(
       createUserDto.email,
     );
@@ -46,7 +45,7 @@ export class AuthService {
       };
     } catch (error) {
       console.error('Register error:', error);
-      // Only general database/unexpected errors should become InternalServerError
+
       throw new InternalServerErrorException(
         'Registration failed due to server error',
       );
@@ -54,13 +53,11 @@ export class AuthService {
   }
 
   async login(loginUserDto: LoginUserDto, res: Response) {
-    // Find user by email
     const user = await this.usersService.findByEmail(loginUserDto.email);
     if (!user) {
       throw new BadRequestException('User not found');
     }
 
-    // Validate password
     const isPasswordValid = await bcrypt.compare(
       loginUserDto.password,
       user.password,
@@ -70,18 +67,15 @@ export class AuthService {
     }
 
     try {
-      // Generate JWT token
       const payload = { userId: user._id.toString(), email: user.email };
       const token = await this.jwtService.sign(payload);
 
-      // Set cookie with token
       res.cookie('token', token, {
         httpOnly: true,
         sameSite: 'none',
         secure: true,
       });
 
-      // Return user data
       return res.json({
         user: {
           userId: user._id.toString(),

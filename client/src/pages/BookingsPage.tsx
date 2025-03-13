@@ -29,7 +29,7 @@ export default function BookingsPage() {
   }
 
   async function cancelBooking(ev: React.MouseEvent, bookingId: string) {
-    ev.preventDefault(); // Prevent navigation to booking details
+    ev.preventDefault();
 
     if (!window.confirm('Are you sure you want to cancel this booking?')) {
       return;
@@ -40,7 +40,7 @@ export default function BookingsPage() {
       await axios.delete(`/account/bookings/${bookingId}`, {
         withCredentials: true,
       });
-      // Reload bookings after cancellation
+
       loadBookings();
       alert('Booking has been successfully canceled');
     } catch (error) {

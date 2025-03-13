@@ -10,7 +10,6 @@ describe('UsersService', () => {
   let mockUserModel: any;
 
   beforeEach(async () => {
-    // Create a saved user mock object that will be returned by the save method
     const savedUserMock = {
       _id: new Types.ObjectId(),
       email: 'new@example.com',
@@ -18,17 +17,14 @@ describe('UsersService', () => {
       password: 'hashedpassword',
     };
 
-    // Create a proper Mongoose model mock
     mockUserModel = function () {
-      // This function acts as the Model constructor (new Model())
       return {
         save: jest.fn().mockResolvedValue(savedUserMock),
       };
     };
 
-    // Add static methods to the model function
     mockUserModel.findOne = jest.fn().mockImplementation(() => ({
-      exec: jest.fn().mockResolvedValue(null), // Default to no user found
+      exec: jest.fn().mockResolvedValue(null),
     }));
 
     const module: TestingModule = await Test.createTestingModule({
@@ -46,7 +42,6 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should throw BadRequestException if email already exists', async () => {
-      // Mock findOne to return a user, simulating that the email exists
       mockUserModel.findOne = jest.fn().mockImplementation(() => ({
         exec: jest.fn().mockResolvedValue({ email: 'test@example.com' }),
       }));
@@ -63,15 +58,12 @@ describe('UsersService', () => {
         password: 'hashedpassword',
       };
 
-      // Make sure findOne returns null to indicate the email isn't in use
       mockUserModel.findOne = jest.fn().mockImplementation(() => ({
         exec: jest.fn().mockResolvedValue(null),
       }));
 
-      // The test will now use the mock implementation set up in beforeEach
       const result = await service.create(newUser);
 
-      // We expect the result to be the mock saved user (defined in beforeEach)
       expect(result).toMatchObject({
         email: 'new@example.com',
         name: 'New User',

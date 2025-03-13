@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const GEOAPIFY_API_KEY = '9a8cd376bb8d49e49f240c01f2c3321b';
-
 const LocationSearch: React.FC<{ onSelect: (address: string) => void }> = ({
   onSelect,
 }) => {
@@ -17,7 +15,7 @@ const LocationSearch: React.FC<{ onSelect: (address: string) => void }> = ({
       const response = await axios.get(
         `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(
           input
-        )}&apiKey=${GEOAPIFY_API_KEY}`,
+        )}&apiKey=${import.meta.env.VITE_GEOAPIFY_API_KEY}`,
         { withCredentials: false }
       );
       const results = response.data.features.map(

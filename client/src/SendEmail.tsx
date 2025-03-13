@@ -1,36 +1,38 @@
-import { useRef } from 'react';
+import { useRef, FormEvent } from 'react';
 import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
-  const form = useRef();
+  const form = useRef<HTMLFormElement>(null);
 
-  const sendEmail = (e) => {
+  const sendEmail = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    emailjs
-      .sendForm(
-        'service_7agvmw2', // Service ID
-        'template_qo123gf', // Template ID
-        form.current,
-        '2d5eU0FC4EQ3Yemqu' // Public Key
-      )
-      .then((result) => {
-        console.log('Email sent successfully:', result.text);
-        alert('Повідомлення надіслано!');
-      })
-      .catch((error) => {
-        console.error('Error sending email:', error.text);
-      });
+    if (form.current) {
+      emailjs
+        .sendForm(
+          import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          form.current,
+          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+        )
+        .then((result) => {
+          console.log('Email sent successfully:', result.text);
+          alert('Email sent successfully!');
+        })
+        .catch((error) => {
+          console.error('Error sending email:', error.text);
+        });
 
-    e.target.reset();
+      e.currentTarget.reset();
+    }
   };
 
   return (
     <form ref={form} onSubmit={sendEmail}>
-      <input type="text" name="name" placeholder="Ваше ім'я" required />
-      <input type="email" name="email" placeholder="Ваш Email" required />
-      <textarea name="message" placeholder="Ваше повідомлення" required />
-      <button type="submit">Надіслати</button>
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="email" name="email" placeholder="Email" required />
+      <textarea name="message" placeholder="Message" required />
+      <button type="submit">Send</button>
     </form>
   );
 };

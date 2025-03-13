@@ -14,7 +14,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as download from 'image-downloader';
 
-// Mock modules
 jest.mock('fs');
 jest.mock('path');
 jest.mock('image-downloader');
@@ -58,11 +57,10 @@ describe('UserAccommodationsService', () => {
   };
 
   beforeEach(async () => {
-    // Create a model factory for mocking Mongoose models
     const mockAccommodationModelFactory = {
       find: jest.fn(),
       findById: jest.fn(),
-      create: jest.fn(), // Added create method
+      create: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -85,18 +83,13 @@ describe('UserAccommodationsService', () => {
     );
     jwtService = module.get<JwtService>(JwtService);
 
-    // Reset mocks after each test
     jest.clearAllMocks();
   });
 
-  // Перевірка, що сервіс створюється успішно
-  // Check if service is created successfully
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  // Тести для методу uploadByLink
-  // Tests for uploadByLink method
   describe('uploadByLink', () => {
     const testLink = 'http://example.com/image.jpg';
     const expectedFileName = 'photo123456789.jpg';
@@ -109,8 +102,6 @@ describe('UserAccommodationsService', () => {
       (download.image as jest.Mock).mockResolvedValue({});
     });
 
-    // Перевіряємо успішне завантаження зображення
-    // Test successful image upload
     it('should upload image by link successfully', async () => {
       const result = await service.uploadByLink(testLink);
 
@@ -123,8 +114,6 @@ describe('UserAccommodationsService', () => {
       expect(result).toBe(expectedFileName);
     });
 
-    // Перевіряємо обробку помилки при завантаженні
-    // Test error handling during upload
     it('should throw InternalServerErrorException when upload fails', async () => {
       (download.image as jest.Mock).mockRejectedValue(
         new Error('Upload failed'),
@@ -136,31 +125,22 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу uploadFile
-  // Tests for uploadFile method
   describe('uploadFile', () => {
     const mockFiles = [
       { filename: 'file1.jpg', path: '/tmp/file1.jpg' },
       { filename: 'file2.jpg', path: '/tmp/file2.jpg' },
     ] as Express.Multer.File[];
 
-    // Перевіряємо успішне завантаження файлів
-    // Test successful file upload
     it('should upload files successfully', async () => {
       const result = await service.uploadFile(mockFiles);
 
       expect(result).toEqual(['file1.jpg', 'file2.jpg']);
     });
 
-    // Перевіряємо випадок, коли файли не були передані
-    // Test case when no files are provided
     it('should throw BadRequestException when no files are provided', async () => {
       await expect(service.uploadFile([])).rejects.toThrow('No files uploaded');
     });
 
-    // FIXED: Adjusted the test to match the service implementation
-    // Перевіряємо випадок, коли у файлу відсутній шлях
-    // Test case when file has no path
     it('should throw InternalServerErrorException when file processing fails', async () => {
       const invalidFiles = [{ filename: 'file.jpg' }] as Express.Multer.File[];
 
@@ -170,12 +150,7 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу createAccommodation
-  // Tests for createAccommodation method
   describe('createAccommodation', () => {
-    // UPDATED: Fixed test to use create method instead of constructor and save
-    // Перевіряємо успішне створення житла
-    // Test successful accommodation creation
     it('should create accommodation successfully', async () => {
       const expectedResult = {
         ...mockAccommodationDto,
@@ -199,9 +174,6 @@ describe('UserAccommodationsService', () => {
       });
     });
 
-    // UPDATED: Fixed test to use create method instead of constructor and save
-    // Перевіряємо обробку помилки при створенні
-    // Test error handling during creation
     it('should throw InternalServerErrorException when creation fails', async () => {
       (accommodationModel.create as jest.Mock).mockRejectedValue(
         new Error('Creation failed'),
@@ -213,11 +185,7 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу showUserAccommodations
-  // Tests for showUserAccommodations method
   describe('showUserAccommodations', () => {
-    // Перевіряємо успішне отримання списку житла користувача
-    // Test successful retrieval of user accommodations
     it('should return user accommodations successfully', async () => {
       const mockAccommodations = [mockAccommodation];
       (accommodationModel.find as jest.Mock).mockResolvedValue(
@@ -232,8 +200,6 @@ describe('UserAccommodationsService', () => {
       expect(result).toEqual(mockAccommodations);
     });
 
-    // Перевіряємо обробку помилки при отриманні списку
-    // Test error handling during retrieval
     it('should throw InternalServerErrorException when retrieval fails', async () => {
       (accommodationModel.find as jest.Mock).mockRejectedValue(
         new Error('Retrieval failed'),
@@ -245,11 +211,7 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу showAllAccommodations
-  // Tests for showAllAccommodations method
   describe('showAllAccommodations', () => {
-    // Перевіряємо успішне отримання всіх житлових приміщень
-    // Test successful retrieval of all accommodations
     it('should return all accommodations successfully', async () => {
       const mockAccommodations = [mockAccommodation];
       (accommodationModel.find as jest.Mock).mockResolvedValue(
@@ -262,8 +224,6 @@ describe('UserAccommodationsService', () => {
       expect(result).toEqual(mockAccommodations);
     });
 
-    // Перевіряємо обробку помилки при отриманні всіх житлових приміщень
-    // Test error handling during retrieval
     it('should throw InternalServerErrorException when retrieval fails', async () => {
       (accommodationModel.find as jest.Mock).mockRejectedValue(
         new Error('Retrieval failed'),
@@ -275,13 +235,9 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу showAccommodationById
-  // Tests for showAccommodationById method
   describe('showAccommodationById', () => {
     const accommodationId = new Types.ObjectId().toString();
 
-    // Перевіряємо успішне отримання житла за ідентифікатором
-    // Test successful retrieval of accommodation by ID
     it('should return accommodation by ID successfully', async () => {
       (accommodationModel.findById as jest.Mock).mockResolvedValue(
         mockAccommodation,
@@ -293,19 +249,13 @@ describe('UserAccommodationsService', () => {
       expect(result).toEqual(mockAccommodation);
     });
 
-    // Перевіряємо випадок, коли ідентифікатор не передано
-    // Test case when ID is not provided
     it('should throw BadRequestException when ID is not provided', async () => {
       await expect(service.showAccommodationById('')).rejects.toThrow(
         'Accommodation id must be provided',
       );
     });
 
-    // FIXED: Set up proper conditions instead of mocking the entire method
-    // Перевіряємо випадок, коли житло не знайдено
-    // Test case when accommodation is not found
     it('should throw NotFoundException when accommodation is not found', async () => {
-      // Set up findById to return null
       (accommodationModel.findById as jest.Mock).mockResolvedValue(null);
 
       await expect(
@@ -313,8 +263,6 @@ describe('UserAccommodationsService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    // Перевіряємо обробку помилки при пошуку
-    // Test error handling during lookup
     it('should throw InternalServerErrorException when lookup fails', async () => {
       (accommodationModel.findById as jest.Mock).mockRejectedValue(
         new Error('Lookup failed'),
@@ -326,16 +274,10 @@ describe('UserAccommodationsService', () => {
     });
   });
 
-  // Тести для методу saveAccommodation
-  // Tests for saveAccommodation method
   describe('saveAccommodation', () => {
     const accommodationId = new Types.ObjectId().toString();
 
-    // FIXED: All tests for saveAccommodation
-    // Перевіряємо успішне оновлення житла
-    // Test successful accommodation update
     it('should update accommodation successfully', async () => {
-      // Set up the mock to return an accommodation with matching owner
       (accommodationModel.findById as jest.Mock).mockResolvedValue({
         ...mockAccommodation,
         owner: new Types.ObjectId(mockUser._id),
@@ -355,11 +297,7 @@ describe('UserAccommodationsService', () => {
       expect(result).toBeDefined();
     });
 
-    // FIXED: Set up proper conditions instead of mocking the entire method
-    // Перевіряємо випадок, коли житло не знайдено
-    // Test case when accommodation is not found
     it('should throw NotFoundException when accommodation is not found', async () => {
-      // Set up findById to return null
       (accommodationModel.findById as jest.Mock).mockResolvedValue(null);
 
       await expect(
@@ -371,14 +309,10 @@ describe('UserAccommodationsService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    // FIXED: Set up proper conditions instead of mocking the entire method
-    // Перевіряємо випадок, коли користувач не є власником житла
-    // Test case when user is not the owner
     it('should throw ForbiddenException when user is not the owner', async () => {
-      // Return an accommodation with a different owner
       (accommodationModel.findById as jest.Mock).mockResolvedValue({
         ...mockAccommodation,
-        owner: new Types.ObjectId(), // Different ID than mockUser._id
+        owner: new Types.ObjectId(),
       });
 
       await expect(
@@ -390,10 +324,7 @@ describe('UserAccommodationsService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
 
-    // Перевіряємо обробку помилки при оновленні
-    // Test error handling during update
     it('should throw InternalServerErrorException when update fails', async () => {
-      // Mock to find the accommodation
       (accommodationModel.findById as jest.Mock).mockResolvedValue({
         ...mockAccommodation,
         owner: new Types.ObjectId(mockUser._id),

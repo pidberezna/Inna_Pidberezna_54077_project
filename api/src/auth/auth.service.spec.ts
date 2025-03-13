@@ -28,7 +28,6 @@ describe('AuthService', () => {
     verify: jest.fn(),
   };
 
-  // Mock response object
   const mockResponse = () => {
     const res: Partial<Response> = {};
     res.cookie = jest.fn().mockReturnValue(res);
@@ -72,15 +71,12 @@ describe('AuthService', () => {
     };
 
     it('should register a new user successfully', async () => {
-      // Arrange
       mockUsersService.findByEmail.mockResolvedValue(null);
       mockUsersService.create.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword' as never);
 
-      // Act
       const result = await authService.register(createUserDto);
 
-      // Assert
       expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
         createUserDto.email,
       );
@@ -100,10 +96,8 @@ describe('AuthService', () => {
     });
 
     it('should throw BadRequestException if email is already in use', async () => {
-      // Arrange
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
 
-      // Act & Assert
       await expect(authService.register(createUserDto)).rejects.toThrow(
         BadRequestException,
       );
@@ -114,12 +108,10 @@ describe('AuthService', () => {
     });
 
     it('should throw InternalServerErrorException if database operation fails', async () => {
-      // Arrange
       mockUsersService.findByEmail.mockResolvedValue(null);
       mockUsersService.create.mockRejectedValue(new Error('Database error'));
       jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword' as never);
 
-      // Act & Assert
       await expect(authService.register(createUserDto)).rejects.toThrow(
         InternalServerErrorException,
       );
@@ -144,16 +136,13 @@ describe('AuthService', () => {
     };
 
     it('should login user successfully', async () => {
-      // Arrange
       const res = mockResponse();
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
       mockJwtService.sign.mockReturnValue('jwt-token');
 
-      // Act
       await authService.login(loginUserDto, res);
 
-      // Assert
       expect(mockUsersService.findByEmail).toHaveBeenCalledWith(
         loginUserDto.email,
       );
@@ -180,11 +169,9 @@ describe('AuthService', () => {
     });
 
     it('should throw BadRequestException if user is not found', async () => {
-      // Arrange
       const res = mockResponse();
       mockUsersService.findByEmail.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(authService.login(loginUserDto, res)).rejects.toThrow(
         BadRequestException,
       );
@@ -198,12 +185,10 @@ describe('AuthService', () => {
     });
 
     it('should throw BadRequestException if password is incorrect', async () => {
-      // Arrange
       const res = mockResponse();
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
 
-      // Act & Assert
       await expect(authService.login(loginUserDto, res)).rejects.toThrow(
         BadRequestException,
       );
@@ -220,7 +205,6 @@ describe('AuthService', () => {
     });
 
     it('should throw InternalServerErrorException if JWT signing fails', async () => {
-      // Arrange
       const res = mockResponse();
       mockUsersService.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
@@ -228,7 +212,6 @@ describe('AuthService', () => {
         throw new Error('JWT signing error');
       });
 
-      // Act & Assert
       await expect(authService.login(loginUserDto, res)).rejects.toThrow(
         InternalServerErrorException,
       );
@@ -247,13 +230,10 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should logout user successfully', async () => {
-      // Arrange
       const res = mockResponse();
 
-      // Act
       await authService.logout(res);
 
-      // Assert
       expect(res.clearCookie).toHaveBeenCalledWith('token', {
         httpOnly: true,
         secure: true,
@@ -265,13 +245,11 @@ describe('AuthService', () => {
     });
 
     it('should throw InternalServerErrorException if logout fails', async () => {
-      // Arrange
       const res = mockResponse();
       res.clearCookie = jest.fn().mockImplementation(() => {
         throw new Error('Cookie error');
       });
 
-      // Act & Assert
       await expect(authService.logout(res)).rejects.toThrow(
         InternalServerErrorException,
       );
@@ -280,21 +258,17 @@ describe('AuthService', () => {
 
   describe('verifyToken', () => {
     it('should verify token successfully', async () => {
-      // Arrange
       const token = 'valid-token';
       const decodedToken = { userId: 'user-id', email: 'test@example.com' };
       mockJwtService.verify.mockReturnValue(decodedToken);
 
-      // Act
       const result = await authService.verifyToken(token);
 
-      // Assert
       expect(mockJwtService.verify).toHaveBeenCalledWith(token);
       expect(result).toEqual(decodedToken);
     });
 
     it('should throw UnauthorizedException if token is not provided', async () => {
-      // Act & Assert
       await expect(authService.verifyToken('')).rejects.toThrow(
         UnauthorizedException,
       );
@@ -302,13 +276,11 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if token verification fails', async () => {
-      // Arrange
       const token = 'invalid-token';
       mockJwtService.verify.mockImplementation(() => {
         throw new Error('Token verification error');
       });
 
-      // Act & Assert
       await expect(authService.verifyToken(token)).rejects.toThrow(
         UnauthorizedException,
       );

@@ -22,7 +22,6 @@ export class BookingService {
       throw new UnauthorizedException('User not authenticated');
     }
 
-    // Валідація дат (використовуючи рядкове порівняння або створення об'єктів Date)
     if (new Date(bookingDto.checkIn) >= new Date(bookingDto.checkOut)) {
       throw new BadRequestException(
         'Check-in date must be before check-out date',
@@ -53,7 +52,7 @@ export class BookingService {
           user: user._id,
         })
         .populate('place')
-        .sort({ createdAt: -1 }); // Сортування за датою створення, найновіші перші
+        .sort({ createdAt: -1 });
 
       return bookings;
     } catch (error) {
@@ -80,17 +79,11 @@ export class BookingService {
         throw new NotFoundException('Booking not found');
       }
 
-      // Перевірка, чи користувач є власником бронювання
       if (booking.user.toString() !== user._id.toString()) {
         throw new UnauthorizedException(
           'You can only cancel your own bookings',
         );
       }
-
-      // Опціонально: можна додати перевірку, чи не пізно скасовувати (напр., за 24 години)
-      // if (new Date(booking.checkIn).getTime() - new Date().getTime() < 24 * 60 * 60 * 1000) {
-      //   throw new BadRequestException('Cannot cancel bookings less than 24 hours before check-in');
-      // }
 
       await this.bookingModel.findByIdAndDelete(bookingId);
 
