@@ -5,6 +5,8 @@ import { Booking } from './enitites/booking.entity';
 import {
   UnauthorizedException,
   InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { BookingDto } from './dtos/booking.dto';
 import { User } from 'src/users/entities/user.entity';
@@ -47,6 +49,8 @@ describe('BookingService', () => {
   const mockBookingModel = {
     create: jest.fn(),
     find: jest.fn(),
+    findById: jest.fn(),
+    findByIdAndDelete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -136,6 +140,96 @@ describe('BookingService', () => {
       expect(mockBookingModel.find).toHaveBeenCalled();
       expect(mockPopulate).toHaveBeenCalledWith('place');
       expect(mockSort).toHaveBeenCalledWith({ createdAt: -1 });
+    });
+  });
+
+  describe('cancelBooking', () => {
+    const bookingId = '6123456789abcdef1234567a';
+    const mockBookingId = new Types.ObjectId(bookingId);
+    const mockBookingWithCorrectUser = {
+      _id: mockBookingId,
+      user: mockUser._id,
+      checkIn: '2025-04-01T10:00:00.000Z',
+      checkOut: '2025-04-05T12:00:00.000Z',
+      numberOfGuests: 2,
+      name: 'Test Booking',
+      phone: '+380123456789',
+      price: 500,
+    };
+
+    const differentUserId = new Types.ObjectId('6123456789abcdef12345679');
+    const mockBookingWithDifferentUser = {
+      ...mockBookingWithCorrectUser,
+      user: differentUserId,
+    };
+
+    it('should successfully cancel a booking', async () => {
+      mockBookingModel.findById.mockResolvedValue(mockBookingWithCorrectUser);
+      mockBookingModel.findByIdAndDelete.mockResolvedValue({
+        acknowledged: true,
+      });
+
+      const result = await service.cancelBooking(mockUser, bookingId);
+
+      expect(mockBookingModel.findById).toHaveBeenCalledWith(bookingId);
+      expect(mockBookingModel.findByIdAndDelete).toHaveBeenCalledWith(
+        bookingId,
+      );
+      expect(result).toEqual({
+        success: true,
+        message: 'Booking successfully canceled',
+      });
+    });
+
+    it('should throw UnauthorizedException if user is not provided', async () => {
+      await expect(service.cancelBooking(null, bookingId)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockBookingModel.findById).not.toHaveBeenCalled();
+      expect(mockBookingModel.findByIdAndDelete).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException if booking ID is invalid', async () => {
+      await expect(
+        service.cancelBooking(mockUser, 'invalid-id'),
+      ).rejects.toThrow(BadRequestException);
+      expect(mockBookingModel.findById).not.toHaveBeenCalled();
+      expect(mockBookingModel.findByIdAndDelete).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if booking is not found', async () => {
+      mockBookingModel.findById.mockResolvedValue(null);
+
+      await expect(service.cancelBooking(mockUser, bookingId)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(mockBookingModel.findById).toHaveBeenCalledWith(bookingId);
+      expect(mockBookingModel.findByIdAndDelete).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException if booking belongs to a different user', async () => {
+      mockBookingModel.findById.mockResolvedValue(mockBookingWithDifferentUser);
+
+      await expect(service.cancelBooking(mockUser, bookingId)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(mockBookingModel.findById).toHaveBeenCalledWith(bookingId);
+      expect(mockBookingModel.findByIdAndDelete).not.toHaveBeenCalled();
+    });
+
+    it('should throw InternalServerErrorException if deletion fails', async () => {
+      mockBookingModel.findById.mockResolvedValue(mockBookingWithCorrectUser);
+      mockBookingModel.findByIdAndDelete.mockRejectedValue(
+        new Error('Database error'),
+      );
+
+      await expect(service.cancelBooking(mockUser, bookingId)).rejects.toThrow(
+        InternalServerErrorException,
+      );
+      expect(mockBookingModel.findById).toHaveBeenCalledWith(bookingId);
+      expect(mockBookingModel.findByIdAndDelete).toHaveBeenCalledWith(
+        bookingId,
+      );
     });
   });
 });
