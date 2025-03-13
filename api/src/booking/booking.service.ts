@@ -63,4 +63,48 @@ export class BookingService {
       );
     }
   }
+
+  async cancelBooking(user: User, bookingId: string) {
+    if (!user) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (!Types.ObjectId.isValid(bookingId)) {
+      throw new BadRequestException('Invalid booking ID');
+    }
+
+    try {
+      const booking = await this.bookingModel.findById(bookingId);
+
+      if (!booking) {
+        throw new NotFoundException('Booking not found');
+      }
+
+      // Перевірка, чи користувач є власником бронювання
+      if (booking.user.toString() !== user._id.toString()) {
+        throw new UnauthorizedException(
+          'You can only cancel your own bookings',
+        );
+      }
+
+      // Опціонально: можна додати перевірку, чи не пізно скасовувати (напр., за 24 години)
+      // if (new Date(booking.checkIn).getTime() - new Date().getTime() < 24 * 60 * 60 * 1000) {
+      //   throw new BadRequestException('Cannot cancel bookings less than 24 hours before check-in');
+      // }
+
+      await this.bookingModel.findByIdAndDelete(bookingId);
+
+      return { success: true, message: 'Booking successfully canceled' };
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof UnauthorizedException
+      ) {
+        throw error;
+      }
+      console.error('Error canceling booking:', error);
+      throw new InternalServerErrorException('Could not cancel booking');
+    }
+  }
 }

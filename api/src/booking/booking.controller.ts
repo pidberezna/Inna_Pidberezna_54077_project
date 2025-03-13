@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { BookingDto } from './dtos/booking.dto';
 import { AuthenticatedRequest, AuthGuard } from '../auth/auth.guard';
@@ -20,5 +29,14 @@ export class BookingController {
   @UseGuards(AuthGuard)
   async showAccommodations(@Req() req: AuthenticatedRequest) {
     return this.bookingService.showAccommodations(req.user);
+  }
+
+  @Delete('bookings/:id')
+  @UseGuards(AuthGuard)
+  async cancelBooking(
+    @Req() req: AuthenticatedRequest,
+    @Param('id') id: string,
+  ) {
+    return this.bookingService.cancelBooking(req.user, id);
   }
 }
