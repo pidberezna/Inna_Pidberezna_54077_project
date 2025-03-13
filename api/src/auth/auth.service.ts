@@ -20,14 +20,15 @@ export class AuthService {
   ) {}
 
   async register(createUserDto: CreateUserDto) {
-    try {
-      const existingUser = await this.usersService.findByEmail(
-        createUserDto.email,
-      );
-      if (existingUser) {
-        throw new BadRequestException('Email already in use');
-      }
+    // Check if email already exists
+    const existingUser = await this.usersService.findByEmail(
+      createUserDto.email,
+    );
+    if (existingUser) {
+      throw new BadRequestException('Email already in use');
+    }
 
+    try {
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
       const user = await this.usersService.create({
@@ -35,6 +36,7 @@ export class AuthService {
         ...createUserDto,
         password: hashedPassword,
       });
+
       return {
         user: {
           id: user._id.toString(),
@@ -44,34 +46,42 @@ export class AuthService {
       };
     } catch (error) {
       console.error('Register error:', error);
-      throw new InternalServerErrorException('Registration failed');
+      // Only general database/unexpected errors should become InternalServerError
+      throw new InternalServerErrorException(
+        'Registration failed due to server error',
+      );
     }
   }
 
   async login(loginUserDto: LoginUserDto, res: Response) {
+    // Find user by email
+    const user = await this.usersService.findByEmail(loginUserDto.email);
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(
+      loginUserDto.password,
+      user.password,
+    );
+    if (!isPasswordValid) {
+      throw new BadRequestException('Incorrect password');
+    }
+
     try {
-      const user = await this.usersService.findByEmail(loginUserDto.email);
-      if (!user) {
-        throw new BadRequestException('User not found');
-      }
-
-      const isPasswordValid = await bcrypt.compare(
-        loginUserDto.password,
-        user.password,
-      );
-      if (!isPasswordValid) {
-        throw new BadRequestException('Incorrect password');
-      }
-
+      // Generate JWT token
       const payload = { userId: user._id.toString(), email: user.email };
       const token = await this.jwtService.sign(payload);
 
+      // Set cookie with token
       res.cookie('token', token, {
         httpOnly: true,
         sameSite: 'none',
         secure: true,
       });
 
+      // Return user data
       return res.json({
         user: {
           userId: user._id.toString(),
@@ -80,8 +90,10 @@ export class AuthService {
         },
       });
     } catch (error) {
-      console.error('Login error:', error);
-      throw new InternalServerErrorException('Login failed');
+      console.error('JWT signing error:', error);
+      throw new InternalServerErrorException(
+        'Authentication failed due to server error',
+      );
     }
   }
 
@@ -95,7 +107,9 @@ export class AuthService {
       return res.json({ message: 'Logged out successfully' });
     } catch (error) {
       console.error('Logout error:', error);
-      throw new InternalServerErrorException('Logout failed');
+      throw new InternalServerErrorException(
+        'Logout failed due to server error',
+      );
     }
   }
 
@@ -103,6 +117,7 @@ export class AuthService {
     if (!token) {
       throw new UnauthorizedException('JWT must be provided');
     }
+
     try {
       return this.jwtService.verify(token);
     } catch (error) {

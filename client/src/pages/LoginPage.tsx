@@ -8,12 +8,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState<string>('');
   const [redirect, setRedirect] = useState<boolean>(false);
   const { setUser } = useContext(UserContext);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
   async function handleLoginSubmit(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
       const { data } = await axios.post(
-        `${VITE_API_URL}/login`,
+        `/login`,
         { email, password },
         { withCredentials: true }
       );

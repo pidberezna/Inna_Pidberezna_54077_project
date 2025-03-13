@@ -5,9 +5,6 @@ interface ImageProps extends ImgHTMLAttributes<HTMLImageElement> {
 }
 
 export default function Image({ src, ...rest }: ImageProps) {
-  src =
-    src && src.includes('https://')
-      ? src
-      : `${import.meta.env.VITE_API_URL}/uploads/${src}`;
+  src = src && src.includes('http://') ? src : `/uploads/${src}`;
   return <img {...rest} src={src} alt={''} />;
 }

@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model, Types } from 'mongoose';
-import { User, UserDocument } from 'src/users/entities/user.entity';
+import { User, UserDocument } from '../users/entities/user.entity';
 
 export interface AuthenticatedRequest extends Request {
   user?: User;

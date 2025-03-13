@@ -11,10 +11,6 @@ export default function PlaceImg({
 }) {
   if (!place.photos?.length) return '';
   return (
-    <img
-      className={className}
-      src={`${import.meta.env.VITE_API_URL}/uploads/` + place.photos[index]}
-      alt=""
-    />
+    <img className={className} src={`/uploads/` + place.photos[index]} alt="" />
   );
 }

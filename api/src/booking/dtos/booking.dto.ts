@@ -23,6 +23,9 @@ export class BookingDto {
   name: string;
 
   @IsString()
+  email: string;
+
+  @IsString()
   phone: string;
 
   @IsNumber()

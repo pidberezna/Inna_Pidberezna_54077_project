@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@nestjs/cli": "^11.0.2",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",

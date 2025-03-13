@@ -6,12 +6,11 @@ export default function RegisterPage() {
   const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
   async function registerUser(ev: React.FormEvent<HTMLFormElement>) {
     ev.preventDefault();
     try {
       await axios.post(
-        `${VITE_API_URL}/register`,
+        `/register`,
         {
           name,
           email,

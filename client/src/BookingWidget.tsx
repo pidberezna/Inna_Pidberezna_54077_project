@@ -17,11 +17,12 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
   const [phone, setPhone] = useState('');
   const [redirect, setRedirect] = useState('');
   const { user } = useContext(UserContext);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     if (user) {
       setName(user.name);
+      setEmail(user.email);
     }
   }, [user]);
 
@@ -34,12 +35,13 @@ export default function BookingWidget({ place }: BookingWidgetProps) {
   }
   async function bookThisPlace() {
     const response = await axios.post(
-      `${VITE_API_URL}/account/bookings`,
+      `/account/bookings`,
       {
         checkIn,
         checkOut,
         numberOfGuests,
         name,
+        email,
         phone,
         place: place._id,
         price: numberOfNights * place.price,

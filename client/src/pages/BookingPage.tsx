@@ -1,10 +1,11 @@
 import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import AddressLink from '../AddressLink';
 import PlaceGallery from '../PlaceGallery';
 import BookingDates from '../BookingDates';
 import { Place } from './PlacesPage';
+import { sendBookingConfirmation } from '../emailService';
 
 export interface Booking {
   place: Place;
@@ -13,6 +14,7 @@ export interface Booking {
   checkOut: Date;
   numberOfGuests: number;
   name: string;
+  email: string;
   phone: string;
   price: number;
 }
@@ -20,19 +22,23 @@ export interface Booking {
 export default function BookingPage() {
   const { id } = useParams<{ id: string }>();
   const [booking, setBooking] = useState<Booking | null>(null);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
+  const emailSent = useRef(false);
+
   useEffect(() => {
     if (id) {
-      axios
-        .get<Booking[]>(`${VITE_API_URL}/account/bookings`)
-        .then((response) => {
-          const foundBooking = response.data.find(
-            (booking) => booking._id === id
-          );
-          if (foundBooking) {
-            setBooking(foundBooking);
+      axios.get<Booking[]>(`/account/bookings`).then((response) => {
+        const foundBooking = response.data.find(
+          (booking) => booking._id === id
+        );
+        if (foundBooking) {
+          setBooking(foundBooking);
+
+          if (!emailSent.current) {
+            sendBookingConfirmation(foundBooking);
+            emailSent.current = true;
           }
-        });
+        }
+      });
     }
   }, [id]);
 

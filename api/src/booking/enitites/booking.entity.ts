@@ -21,6 +21,9 @@ export class Booking {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ required: true, ref: 'User' })
+  email: string;
+
   @Prop({ required: true })
   phone: string;
 

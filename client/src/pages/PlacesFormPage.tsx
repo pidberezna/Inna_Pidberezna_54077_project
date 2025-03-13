@@ -4,6 +4,7 @@ import PhotosUploader from '../PhotosUploader';
 import Perks from '../Perks';
 import AccountNav from '../AccountNav';
 import { Navigate, useParams } from 'react-router-dom';
+import LocationSearch from '../LocationSearch';
 
 export default function PlacesFormPage() {
   const { id } = useParams();
@@ -18,13 +19,12 @@ export default function PlacesFormPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [price, setPrice] = useState(100);
   const [redirect, setRedirect] = useState(false);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     if (!id) {
       return;
     }
     axios
-      .get(`${VITE_API_URL}/account/places/${id}`, { withCredentials: true })
+      .get(`/account/places/${id}`, { withCredentials: true })
       .then((response) => {
         const { data } = response;
         setTitle(data.title);
@@ -71,13 +71,13 @@ export default function PlacesFormPage() {
     };
     if (id) {
       await axios.put(
-        `${VITE_API_URL}/account/places`,
+        `/account/places`,
         { id, ...placeData },
         { withCredentials: true }
       );
       setRedirect(true);
     } else {
-      await axios.post(`${VITE_API_URL}/account/places`, placeData, {
+      await axios.post(`/account/places`, placeData, {
         withCredentials: true,
       });
       setRedirect(true);
@@ -98,12 +98,7 @@ export default function PlacesFormPage() {
           placeholder="title, for example: My lovely apartment"
         />
         {preInput('Address', 'Address to this place')}
-        <input
-          type="text"
-          value={address}
-          onChange={(ev) => setAddress(ev.target.value)}
-          placeholder="address"
-        />
+        <LocationSearch onSelect={(address) => setAddress(address)} />
         {preInput('Photos', 'More = better')}
         <PhotosUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
         {preInput('Description', 'description of the place')}

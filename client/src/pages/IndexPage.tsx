@@ -6,13 +6,10 @@ import Image from '../Image.tsx';
 
 export default function IndexPage() {
   const [places, setPlaces] = useState<Place[]>([]);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
-    axios
-      .get(`${VITE_API_URL}/account/places`, { withCredentials: true })
-      .then((response) => {
-        setPlaces(response.data);
-      });
+    axios.get(`/account/places`, { withCredentials: true }).then((response) => {
+      setPlaces(response.data);
+    });
   }, []);
   return (
     <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

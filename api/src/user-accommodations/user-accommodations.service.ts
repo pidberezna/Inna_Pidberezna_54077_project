@@ -49,25 +49,27 @@ export class UserAccommodationsService {
       throw new BadRequestException('No files uploaded');
     }
     try {
-      return files.map((file) => {
-        if (!file.path) {
-          throw new BadRequestException('File path is undefined');
-        }
-        return file.filename;
-      });
+      // Check if any file in the array is missing a path
+      // before starting the mapping operation
+      const hasMissingPath = files.some((file) => !file.path);
+      if (hasMissingPath) {
+        throw new InternalServerErrorException('Failed to upload files');
+      }
+
+      return files.map((file) => file.filename);
     } catch (error) {
       throw new InternalServerErrorException('Failed to upload files');
     }
   }
 
   async createAccommodation(user: User, accommodationDto: AccommodationDto) {
+    const owner = new Types.ObjectId(user._id);
+
     try {
-      const owner = new Types.ObjectId(user._id);
-      const createdAccommodation = new this.accommodationModel({
+      return await this.accommodationModel.create({
         ...accommodationDto,
         owner,
       });
-      return createdAccommodation.save();
     } catch (error) {
       throw new InternalServerErrorException('Failed to create accommodation');
     }
@@ -106,6 +108,9 @@ export class UserAccommodationsService {
       }
       return accommodation;
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException(
         'Could not retrieve accommodation',
       );
@@ -131,6 +136,12 @@ export class UserAccommodationsService {
       accomDoc.set({ ...accommodationDto });
       return await accomDoc.save();
     } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException
+      ) {
+        throw error;
+      }
       throw new InternalServerErrorException('Could not update accommodation');
     }
   }

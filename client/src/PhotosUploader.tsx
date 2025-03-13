@@ -11,12 +11,11 @@ export default function PhotosUploader({
   onChange,
 }: PhotosUploaderProps) {
   const [photoLink, setPhotoLink] = useState<string>('');
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
 
   async function addPhotoByLink(ev: React.MouseEvent<HTMLButtonElement>) {
     ev.preventDefault();
     const { data: filename } = await axios.post(
-      `${VITE_API_URL}/upload-by-link`,
+      `/upload-by-link`,
       {
         link: photoLink,
       },
@@ -35,7 +34,7 @@ export default function PhotosUploader({
       data.append('photos', files[i]);
     }
     await axios
-      .post(`${VITE_API_URL}/upload`, data, {
+      .post(`/upload`, data, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       .then((response) => {
@@ -83,7 +82,7 @@ export default function PhotosUploader({
             <div key={link} className="h-32 flex relative">
               <img
                 className="rounded-2xl w-full object-cover"
-                src={`${import.meta.env.VITE_API_URL}/uploads/${link}`}
+                src={`/uploads/${link}`}
                 alt="Uploaded"
               />
               <button

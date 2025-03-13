@@ -20,13 +20,10 @@ export interface Place {
 
 export default function PlacesPage() {
   const [places, setPlaces] = useState<Place[]>([]);
-  const VITE_API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
-    axios
-      .get(`${VITE_API_URL}/user-places`, { withCredentials: true })
-      .then(({ data }) => {
-        setPlaces(data);
-      });
+    axios.get(`/user-places`, { withCredentials: true }).then(({ data }) => {
+      setPlaces(data);
+    });
   }, []);
   return (
     <div>

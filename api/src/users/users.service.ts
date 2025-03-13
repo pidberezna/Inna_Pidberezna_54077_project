@@ -14,9 +14,7 @@ export class UsersService {
 
   async create(user: Partial<User>) {
     try {
-      const existingUser = await this.userModel.findOne({
-        email: user.email,
-      });
+      const existingUser = await this.userModel.findOne({ email: user.email });
       if (existingUser) {
         throw new BadRequestException('Email already in use');
       }
@@ -24,6 +22,7 @@ export class UsersService {
       const createdUser = new this.userModel(user);
       return await createdUser.save();
     } catch (error) {
+      if (error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException('Registration failed.');
     }
   }
